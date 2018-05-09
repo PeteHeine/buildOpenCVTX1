@@ -66,14 +66,14 @@ cd opencv_extra
 git checkout -b v3.3.0 3.3.0
 cd ..
 
+cd ~/
 virtualenv cv_virtual_env
-cd cv_virtual_env
-source bin/activate
-cd ..
+source cv_virtual_env/bin/activate
+cd -
 
 
 cd opencv
-sudo mkdir build
+mkdir build
 cd build
 # Jetson TX1 
 cmake \
@@ -89,6 +89,7 @@ cmake \
     -DBUILD_opencv_java=OFF \
     -DBUILD_opencv_python2=ON \
     -DBUILD_opencv_python3=ON \
+    -DPYTHON_EXECUTABLE=~/cv_virtual_env/bin/bin/python \
     -DENABLE_PRECOMPILED_HEADERS=OFF \
     -DWITH_OPENCL=ON \
     -DWITH_OPENMP=ON \
