@@ -7,10 +7,12 @@
 
 OPENCV_VERSION='3.4.1'
 
+echo "Installation of opencv (${OPENCV_VERSION}) ..."
 sudo apt-get install -y \
     libglew-dev \
     libtiff5-dev \
     zlib1g-dev \
+    libv4l-dev \
     libjpeg-dev \
     libpng12-dev \
     libjasper-dev \
@@ -21,23 +23,47 @@ sudo apt-get install -y \
     libswscale-dev \
     libeigen3-dev \
     libtbb-dev \
+    qtbase5-dev \
     libgtk2.0-dev \ 
+    libglew1.6-dev \
     cmake \
     pkg-config
 
 
 
 # Optional 
-sudo apt-get install -y libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev libv4l-dev libxvidcore-dev libx264-dev libgtk-3-dev libjpeg8-dev 
+sudo apt-get install -y libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev libv4l-dev libxvidcore-dev libx264-dev libgtk-3-dev libjpeg8-dev d
+
+# Install openblas (potentially used by opencv and numpy)
+sudo apt-get install -y libopenblas-dev libopenblas-base
+
+# TEST WORKAROUND (https://github.com/opencv/opencv/issues/9953#issuecomment-355124426)
+#RUN THIS LINE: /usr/include/lapacke*.h to '/usr/include/openblas'
+#cp /usr/include/lapacke*.h /usr/include/openblas
+# To potentially fix below
+#-- Found OpenBLAS libraries: /usr/lib/libopenblas.so
+#-- Found OpenBLAS include: /usr/include/openblas
+#-- LAPACK(OpenBLAS): LAPACK_LIBRARIES: /usr/lib/libopenblas.so
+#CMake Warning at cmake/OpenCVFindLAPACK.cmake:29 (message):
+#  LAPACK(OpenBLAS): CBLAS/LAPACK headers are not found in
+#  '/usr/include/openblas'
+#Call Stack (most recent call first):
+#  cmake/OpenCVFindLAPACK.cmake:97 (ocv_lapack_check)
+#  CMakeLists.txt:638 (include)
 
 
 # Python 2.7
 sudo apt-get install -y python-dev python-numpy python-py python-pytest
+echo "Upgrade numpy (python2.7). This takes a long time!! "
+python -m pip install --upgrade pip
+python -m pip install numpy --upgrade --user
 
 # Python 3.5
-sudo apt-get install -y python3.5-dev
-sudo apt-get install -y python-devel
-sudo apt-get install -y python3-numpy
+sudo apt-get install -y python3-dev python3-numpy python3-py python3-pytest 
+echo "Upgrade numpy (python3.5). This takes a long time!! "
+python3.5 -m pip install --upgrade pip
+python3.5 -m pip install numpy --upgrade --user
+
 
 # Computation libraries 
 sudo apt-get install -y libatlas-base-dev numpy gfortran
@@ -100,8 +126,8 @@ cmake \
     -DBUILD_opencv_python2=ON \
     -DBUILD_opencv_python3=ON \
     -DENABLE_PRECOMPILED_HEADERS=OFF \
-    -DWITH_OPENCL=ON \
-    -DWITH_OPENMP=ON \
+    -DENABLE_NEON=ON \
+    -DWITH_OPENCL=OFF \
     -DWITH_FFMPEG=ON \
     -DWITH_GSTREAMER=ON \
     -DWITH_GSTREAMER_0_10=OFF \
@@ -115,12 +141,13 @@ cmake \
     -DWITH_1394=OFF \
     -DWITH_OPENEXR=OFF \
     -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0 \
+    -DBUILD_opencv_cudastereo=OFF \
     -DCUDA_ARCH_BIN=5.3 \
     -DCUDA_ARCH_PTX="" \
-    -DINSTALL_C_EXAMPLES=ON \
+    -DINSTALL_C_EXAMPLES=OFF \
     -DINSTALL_TESTS=ON \
-    -DOPENCV_TEST_DATA_PATH=../opencv_extra \
-    -DOPENCV_EXTRA_MODULES_PATH=../opencv_extra/modules \
+    -DOPENCV_TEST_DATA_PATH=../../opencv_extra \
+    -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
     ../
 
 
@@ -130,6 +157,11 @@ cmake \
 #    -DBUILD_JPEG=OFF \
 #    -DBUILD_ZLIB=OFF \
 #    -DWITH_VTK=OFF \
+#
+# To avoid build bug in opencv. Test one 
+#    -DBUILD_opencv_cudastereo=OFF \
+#    -DWITH_TBB=OFF \
+#
 # Consider running jetson_clocks.sh before compiling
 make -j4
 
