@@ -146,7 +146,7 @@ cmake \
     -DCUDA_ARCH_PTX="" \
     -DINSTALL_C_EXAMPLES=OFF \
     -DINSTALL_TESTS=ON \
-    -DOPENCV_TEST_DATA_PATH=../../opencv_extra \
+    -DOPENCV_TEST_DATA_PATH=../opencv_extra \
     -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
     ../
 
