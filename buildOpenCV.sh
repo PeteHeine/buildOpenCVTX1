@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # License: MIT. See license file in root directory
 # Copyright(c) JetsonHacks (2017)
@@ -5,7 +6,11 @@
 # 1) https://stackoverflow.com/questions/37188623/ubuntu-how-to-install-opencv-for-python3?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 # 2) https://www.begueradj.com/installing-opencv-3.2.0-for-python-3.5.2-on-ubuntu-16.04.2-lts.html
 
-OPENCV_VERSION='3.4.1'
+
+# Opencv version to be installed
+OPENCV_VERSION='3.4.0'
+# Use 3.4.0! (3.4.1 installs, but doesnt work with orb-slam. Tracking fails immediately for some unknown reason) 
+ 
 
 echo "Installation of opencv (${OPENCV_VERSION}) ..."
 sudo apt-get install -y \
@@ -127,7 +132,7 @@ cmake \
     -DBUILD_opencv_python3=ON \
     -DENABLE_PRECOMPILED_HEADERS=OFF \
     -DENABLE_NEON=ON \
-    -DWITH_OPENCL=OFF \
+    -DWITH_OPENCL=ON \
     -DWITH_FFMPEG=ON \
     -DWITH_GSTREAMER=ON \
     -DWITH_GSTREAMER_0_10=OFF \
@@ -137,7 +142,7 @@ cmake \
     -DWITH_CUBLAS=1 \
     -DWITH_GTK=ON \
     -DWITH_VTK=ON \
-    -DWITH_TBB=ON \
+    -DWITH_TBB=OFF \
     -DWITH_1394=OFF \
     -DWITH_OPENEXR=OFF \
     -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-8.0 \
@@ -150,18 +155,17 @@ cmake \
     -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
     ../
 
+# To avoid build bug in opencv. The cuda stereo is removed -DBUILD_opencv_cudastereo=OFF
 
-#    -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-#    -DBUILD_PNG=OFF \
-#    -DBUILD_TIFF=OFF \
-#    -DBUILD_JPEG=OFF \
-#    -DBUILD_ZLIB=OFF \
-#    -DWITH_VTK=OFF \
-#
-# To avoid build bug in opencv. Test one 
-#    -DBUILD_opencv_cudastereo=OFF \
-#    -DWITH_TBB=OFF \
-#
+# Reason why this build will not work as well as the one installed with apt-get. 
+#	- DWITH_TBB=OFF \
+#	- Use opencv 3.4.0 instead of 3.4.1
+#	- Disable extra modules?
+#	- Codecs stuff? Does the images look different? Measure the difference between the two. 
+
+# Reasons why jetson board only uses 1 core.
+# 	- Ensure that numpy uses OpenBLAS
+
 # Consider running jetson_clocks.sh before compiling
 make -j4
 
