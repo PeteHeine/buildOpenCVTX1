@@ -163,8 +163,6 @@ cmake \
 #	- Disable extra modules?
 #	- Codecs stuff? Does the images look different? Measure the difference between the two. 
 
-# Reasons why jetson board only uses 1 core.
-# 	- Ensure that numpy uses OpenBLAS
 
 # Consider running jetson_clocks.sh before compiling
 make -j4
